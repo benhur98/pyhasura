@@ -42,7 +42,7 @@ class _Auth:
         self.signup_url = hasura.scheme + '://auth.' + hasura.domain+'.hasura-app.io/v1/signup'
         self.logout_url = hasura.scheme + '://auth.' + hasura.domain+'.hasura-app.io/v1/user/logout'
         self.login_url = hasura.scheme + '://auth.' + hasura.domain+'.hasura-app.io/v1/login'
-    def signup(self,hasura):
+    def signup_up(self,hasura):
         print("--------HASURA SIGNUP SERVICE-------------\nPassword must be 8 characters or more")
         self.username=input("Enter Username :")
         self.password=input("Enter Password :")
@@ -63,7 +63,7 @@ class _Auth:
         if(res["auth_token"] is not None):
             hasura.token=res["auth_token"]
             hasura.headers['Authorization'] = 'Bearer ' + hasura.token
-            return 'OK'                  
+                  
     
     def login(self):
         ''' Login method '''
@@ -84,7 +84,6 @@ class _Auth:
         if(res["auth_token"] is not None):
             hasura.token=res["auth_token"]
             hasura.headers['Authorization'] = 'Bearer ' + hasura.token
-            return 'OK'
             
         if(res["code"] is "invalid-creds"):
             return 'retry'
@@ -96,7 +95,7 @@ class _Auth:
         ''' Logout method '''
         print("--------HASURA LOGOUT ROUTINE-------------")
         res=requests.post(self.logout_url,None,headers=hasura.headers)  
-                
+            
         pass
 
 class _Data:

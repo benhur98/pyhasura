@@ -4,6 +4,7 @@ def main():
     
     print("DEMO RT database sender..")
     table=input("Enter table name :")
+    hasura.RtdbSyncReceiver(table)
     
     
 def start():
@@ -12,17 +13,17 @@ Enter options:
 1.SignUp
 2.Login
         ''')
-    switch(mode):
-        case '1':
-            resp=hasura.auth.signup()
+    
+    if mode is '1':
+            resp=hasura.auth.signup(hasura)
             if resp is 'OK':
                 print("Success ! ,Login to continue")
                 start()
             if resp is 'retry':
                 print('invalid password/username ! Retry_')
                 start()
-        case '2':
-            resp=hasura.auth.login()
+    if mode is '2':
+            resp=hasura.auth.login(hasura)
             if resp is 'OK':
                 print("Success !")
                 main()

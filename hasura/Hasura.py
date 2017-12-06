@@ -18,12 +18,12 @@ class Hasura:
         self.auth = _Auth(self)
     def receiver(self,table):
         
-        initial_count=self.data.count(table)
+        initial_count=int(self.data.count(table)["count"])
         while True:
-            present_count=self.data.count(table)
+            present_count=int(self.data.count(table)["count"])
             if(present_count is not initial_count):
                 received=self.data.select(table=table,offset=(present_count-1))
-                print("RT data sync is - "received)
+                print("RT data sync is - ",received)
                 
         
     def RtdbSyncReceiver(self,table=''):
@@ -119,7 +119,25 @@ class _Data:
                 headers = self.headers
             )
         return res
+    def insert_sync(self, table, data):
+        ''' Insert data method '''
+        args = locals()
+        del args['self']
+        res = requests.post(
+                self.query_url,
+                data=json.dumps({
+                    'type': 'insert',
+                    'args': {
+                    "objects":[{
+                     'value':data       
+                        }]
 
+                        }
+                }),
+                headers = self.headers
+            )
+        
+        return res.json()
     def insert(self, table, objects, returning=[]):
         ''' Insert data method '''
         args = locals()

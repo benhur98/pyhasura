@@ -26,15 +26,15 @@ class Hasura:
         def receiver(self, table):
             print("Stream service started on table - ",table)
 
-            initial_count = int(self.data.count(table))
+            initial_count = int(self.data.count_new(table))
 
             while True:
-                
-                present_count = int(self.data.count(table))
+
+                present_count = int(self.data.count_new(table))
 
                 if (present_count is not initial_count):
                     initial_count = present_count
-                    received = self.data.select(table=table, offset=(present_count - 1))
+                    received = self.data.select_new(table=table, offset=(present_count - 1))
                     print("RT data sync is - ", received)
 
         thread_recv = threading.Thread(target=receiver, args=(self,table,))
@@ -81,6 +81,13 @@ class _Auth:
             hasura.token = res.json()["auth_token"]
             hasura.headers['Authorization'] = 'Bearer ' + hasura.token
             return 'OK'
+
+    def select(self, table, columns, where={}, order_by={}, limit=10, offset=0):
+        ''' Select data method '''
+        args = locals()
+        del args['self']
+        res = self.query('select', {key: value for key, value in args.items() if value})
+        return res.json()
 
     def login(self,hasura):
         ''' Login method '''
@@ -186,7 +193,7 @@ class _Data:
         res = self.query('delete', {key: value for key, value in args.items() if value})
         return res.json()
 
-    def select(self, table, offset=0):
+    def select_new(self, table, offset=0):
         ''' Select data method '''
         res = requests.post(
             self.query_url,
@@ -204,7 +211,14 @@ class _Data:
         )
         return res.json()
 
-    def count(self, table):
+    def count(self, table, where={}, distinct=[]):
+        ''' Count method '''
+        args = locals()
+        del args['self']
+        res = self.query('count', {key: value for key, value in args.items() if value})
+        return res.json()['count']
+
+    def count_new(self, table):
         ''' Count method '''
 
         res = requests.post(

@@ -1,5 +1,7 @@
 # pyhasura
 
+#Real Time Database added !
+
 This module has been developed on behalf of online hasura hackathons
 
 I have done some modifications in hasura-python module by Hasura team and provided some easy to go function calls and added a very cool feature.

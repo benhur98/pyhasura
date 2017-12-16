@@ -3,7 +3,9 @@ import requests
 import json
 import threading
 import time
-
+import tkinter as tk
+from tkinter import filedialog
+import playy
 class Hasura:
     '''
     Base class for Hasura APIs
@@ -14,15 +16,49 @@ class Hasura:
         self.domain = domain
         self.token = None
         self.scheme = scheme
+        self.root=tk.Tk()
+        self.play=None
+        self.root.withdraw()
+        self.file_path=None
         self.headers = {
             'Content-Type': 'application/json',
         }
         self.data = _Data(self)
         self.auth = _Auth(self)
+    def file_upload(self):
+        print("--------HASURA FILE UPLOAD SERVICE-------------\n");
+        print("select file path ? click enter to continue !")
+        input()
+        self.file_path = filedialog.askopenfilename()
+        url_upload="https://filestore."+self.domain+".hasura-app.io/v1/file"
+
+        res = requests.post(
+            url_upload,
+            data={'file':open(self.file_path, 'rb')},
+            # data=json.dumps((self.file_path.split('/')[-1]), open(self.file_path, 'rb')),
+            headers=({'Authorization':self.headers['Authorization']})
+        )
+        print(res)
+
+
 
 
 
     def RtdbSyncReceiver(self, table=''):
+        def parser(rec):
+
+
+            try:
+                rec = json.loads(rec)
+                if(rec["option"] == "play"):
+                    print("true")
+                    self.play=playy.Song(rec["url"])
+                    self.play.initalize()
+                    self.play.play()
+                if(rec["option"] == "stop"):
+                    self.play.stop()
+            except:
+                pass
         def receiver(self, table):
             print("Stream service started on table - ",table)
 
@@ -36,7 +72,7 @@ class Hasura:
                     initial_count = present_count
                     received = self.data.select_new(table=table, offset=(present_count - 1))
                     print("RT data sync is - ", received)
-
+                    parser(received[0]['value'])
         thread_recv = threading.Thread(target=receiver, args=(self,table,))
         # thread_recv.daemon = True
         thread_recv.start()

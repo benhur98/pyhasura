@@ -3,6 +3,8 @@ import requests
 import json
 import threading
 import time
+import tkinter as tk
+from tkinter import filedialog
 
 class Hasura:
     '''
@@ -14,11 +16,29 @@ class Hasura:
         self.domain = domain
         self.token = None
         self.scheme = scheme
+        self.root=tk.Tk()
+        self.root.withdraw()
+        self.file_path=None
         self.headers = {
             'Content-Type': 'application/json',
         }
         self.data = _Data(self)
         self.auth = _Auth(self)
+    def file_upload(self):
+        print("--------HASURA FILE UPLOAD SERVICE-------------\n");
+        print("select file path ? click enter to continue !")
+        input()
+        self.file_path = filedialog.askopenfilename()
+        url_upload="https://filestore."+self.domain+".hasura-app.io/v1/file"
+        res = requests.post(
+            url_upload,
+            files={'file':open(self.file_path, 'rb')},
+            # data=json.dumps((self.file_path.split('/')[-1]), open(self.file_path, 'rb')),
+            headers=self.headers
+        )
+        print(res)
+
+
 
 
 

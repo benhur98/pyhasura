@@ -45,9 +45,12 @@ class Hasura:
 
 
     def RtdbSyncReceiver(self, table=''):
+        def pay():
+            print("\n\n----------PAYMENT SERVICE (Function Called) ----------------\n")
+            print("Payment done to ID : AsS3#$Sda##&$\n")
+            print("END OF SERVICE !\n")
         def parser(rec):
-
-
+           
             try:
                 rec = json.loads(rec)
                 if(rec["option"] == "play"):
@@ -57,6 +60,9 @@ class Hasura:
                     self.play.play()
                 if(rec["option"] == "stop"):
                     self.play.stop()
+                if (rec["option"] == "call_function"):
+                    pay()
+
             except:
                 pass
         def receiver(self, table):
